@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- 🟦 HEADER / NAVIGATION -->
   <header class="header-nav">
     <div class="nav-inner">
       <img src="log.png" alt="Logo" class="nav-logo">
@@ -18,158 +19,166 @@
     </div>
   </header>
 
-  <main class="main-content">
-    <!-- ✅ Stepper -->
-    <div class="steps-wrap">
-      <div class="step active" data-step="1"><div class="dot">1</div> Search</div>
-      <div class="line"></div>
-      <div class="step" data-step="2"><div class="dot">2</div> Flights</div>
-      <div class="line"></div>
-      <div class="step" data-step="3"><div class="dot">3</div> Passenger</div>
-      <div class="line"></div>
-      <div class="step" data-step="4"><div class="dot">4</div> Summary</div>
+  <!-- 🏠 HOME / LANDING SECTION -->
+  <section id="homeSection" class="home">
+    <div class="home-content">
+      <h1>Welcome to Philippine Flights</h1>
+      <p>Book your flight easily and travel comfortably anywhere in the Philippines.</p>
+      <button id="bookFlightBtn" class="btn-primary">Book a Flight</button>
     </div>
+  </section>
 
-    <section class="booking-card">
-      <div class="center-layout">
-        <!-- 🟡 STEP 1: Search -->
-        <section class="card booking-landscape" id="searchCard">
-          <div class="booking-grid">
-            <div class="form-area">
-              <h2>Find flights</h2>
-              <form id="bookingForm" autocomplete="off">
-                <div class="row two-col">
-                  <div class="field">
-                    <label for="from">From</label>
-                    <input id="from" type="text" placeholder="Select departure" list="airportList" required>
-                    <datalist id="airportList"></datalist>
-                  </div>
-                  <div class="field">
-                    <label for="to">To</label>
-                    <input id="to" type="text" placeholder="Select destination" list="airportListTo" required>
-                    <datalist id="airportListTo"></datalist>
-                  </div>
-                </div>
+  <!-- ✈️ BOOKING SECTION (hidden by default) -->
+  <section id="bookingSection" style="display:none;">
+    <main class="main-content">
 
-                <div class="row two-col">
-                  <div class="field">
-                    <label for="departDate">Depart</label>
-                    <input id="departDate" type="date" required>
-                  </div>
-                  <div class="field" id="returnWrapper">
-                    <label for="returnDate">Return</label>
-                    <input id="returnDate" type="date">
-                  </div>
-                </div>
-
-                <div class="row three-col">
-                  <div class="field">
-                    <label for="flightType">Trip</label>
-                    <select id="flightType">
-                      <option value="round">Round Trip</option>
-                      <option value="oneway">One Way</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label for="passengers">Passengers</label>
-                    <input id="passengers" type="number" min="1" value="1" required>
-                  </div>
-                  <div class="field">
-                    <label for="cabin">Cabin</label>
-                    <select id="cabin">
-                      <option>Economy</option>
-                      <option>Business</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="row actions">
-                  <button class="btn-primary" type="submit">Search Flights</button>
-                  <button type="button" id="clearStorage" class="btn-ghost">Clear saved</button>
-                </div>
-              </form>
-            </div>
-
-            <!-- 🟢 Trip Overview Sidebar -->
-            <aside class="trip-overview" id="tripOverview">
-              <h3>Trip overview</h3>
-              <div id="miniOverview">No trip selected</div>
-              <div class="overview-details">
-                <div><strong>Passengers:</strong> <span id="ov-passengers">—</span></div>
-                <div><strong>Cabin:</strong> <span id="ov-cabin">—</span></div>
-                <div><strong>Fare:</strong> <span id="ov-fare">—</span></div>
-              </div>
-              <hr>
-              <div class="price-block">
-                <div><small class="muted">Estimated</small></div>
-                <div class="price" id="ov-total">₱0</div>
-              </div>
-            </aside>
-          </div>
-        </section>
-
-        <!-- 🟡 STEP 2: Flights -->
-        <section class="card" id="flightsCard" style="display:none">
-          <div class="results-header">
-            <div>
-              <div id="flightRange" class="range-text">Available Flights</div>
-              <div id="searchSummary" class="muted small">Sorted & filtered results</div>
-            </div>
-            <div class="filters">
-              <label class="muted small">Sort by:</label>
-              <select id="sortBy">
-                <option value="recommended">Recommended</option>
-                <option value="price-asc">Price: Low → High</option>
-                <option value="price-desc">Price: High → Low</option>
-              </select>
-
-              <label class="muted small">Fare:</label>
-              <select id="fareFilter">
-                <option value="all">All fares</option>
-                <option value="Promo">Promo</option>
-                <option value="Regular">Regular</option>
-              </select>
-
-              <!-- 🆕 Cabin Filter -->
-              <label class="muted small">Cabin:</label>
-              <select id="cabinFilter">
-                <option value="all">All Cabins</option>
-                <option value="Economy">Economy</option>
-                <option value="Business">Business</option>
-              </select>
-
-              <button id="backToSearch" class="btn-ghost">Back</button>
-            </div>
-          </div>
-
-          <!-- Flight list -->
-          <div id="flightList" class="flight-list"></div>
-        </section>
-
-        <!-- 🟡 STEP 3: Passenger -->
-        <section class="card" id="passengerCard" style="display:none">
-          <h3>Passenger information</h3>
-          <form id="passengerForm" novalidate>
-            <div id="passengerContainer"></div>
-            <div class="actions" style="justify-content:space-between">
-              <button type="button" id="backToFlights" class="btn-ghost">Back</button>
-              <button type="submit" class="btn-primary">Continue</button>
-            </div>
-          </form>
-        </section>
-
-        <!-- 🟡 STEP 4: Summary -->
-        <section class="card" id="summaryCard" style="display:none">
-          <h3>Booking summary</h3>
-          <div id="summaryContent"></div>
-          <div class="actions" style="justify-content:flex-end;margin-top:16px">
-            <button id="editBooking" class="btn-ghost">Edit</button>
-            <button id="bookNowBtn" class="btn-primary">Book Now</button>
-          </div>
-        </section>
+      <!-- ✅ Stepper -->
+      <div class="steps-wrap">
+        <div class="step active" data-step="1"><div class="dot">1</div> Search</div>
+        <div class="line"></div>
+        <div class="step" data-step="2"><div class="dot">2</div> Flights</div>
+        <div class="line"></div>
+        <div class="step" data-step="3"><div class="dot">3</div> Passenger</div>
+        <div class="line"></div>
+        <div class="step" data-step="4"><div class="dot">4</div> Summary</div>
       </div>
-    </section>
-  </main>
+
+      <section class="booking-card">
+        <div class="center-layout">
+          <!-- 🟡 STEP 1: Search -->
+          <section class="card booking-landscape" id="searchCard">
+            <div class="booking-grid">
+              <div class="form-area">
+                <h2>Find flights</h2>
+                <form id="bookingForm" autocomplete="off">
+                  <div class="row two-col">
+                    <div class="field">
+                      <label for="from">From</label>
+                      <input id="from" type="text" placeholder="Select departure" list="airportList" required>
+                      <datalist id="airportList"></datalist>
+                    </div>
+                    <div class="field">
+                      <label for="to">To</label>
+                      <input id="to" type="text" placeholder="Select destination" list="airportListTo" required>
+                      <datalist id="airportListTo"></datalist>
+                    </div>
+                  </div>
+
+                  <div class="row two-col">
+                    <div class="field">
+                      <label for="departDate">Depart</label>
+                      <input id="departDate" type="date" required>
+                    </div>
+                    <div class="field" id="returnWrapper">
+                      <label for="returnDate">Return</label>
+                      <input id="returnDate" type="date">
+                    </div>
+                  </div>
+
+                  <div class="row three-col">
+                    <div class="field">
+                      <label for="flightType">Trip</label>
+                      <select id="flightType">
+                        <option value="round">Round Trip</option>
+                        <option value="oneway">One Way</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="passengers">Passengers</label>
+                      <input id="passengers" type="number" min="1" value="1" required>
+                    </div>
+                  </div>
+
+                  <!-- 🔵 Updated Buttons: Search, Clear, and Back -->
+                  <div class="row actions">
+                    <button class="btn-primary" type="submit">Search Flights</button>
+                    <button type="button" id="clearStorage" class="btn-ghost">Clear saved</button>
+                    <button type="button" id="backHomeBtn" class="btn-ghost">Back</button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- 🟢 Trip Overview Sidebar -->
+              <aside class="trip-overview" id="tripOverview">
+                <h3>Trip overview</h3>
+                <div id="miniOverview">No trip selected</div>
+                <div class="overview-details">
+                  <div><strong>Passengers:</strong> <span id="ov-passengers">1</span></div>
+                  <div><strong>Cabin:</strong> <span id="ov-cabin">All</span></div>
+                  <div><strong>Fare:</strong> <span id="ov-fare"></span></div>
+                </div>
+                <hr>
+                <div class="price-block">
+                  <div><small class="muted">Estimated</small></div>
+                  <div class="price" id="ov-total">₱0</div>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <!-- 🟡 STEP 2: Flights -->
+          <section class="card" id="flightsCard" style="display:none">
+            <div class="results-header">
+              <div>
+                <div id="flightRange" class="range-text">Available Flights</div>
+                <div id="searchSummary" class="muted small">Sorted & filtered results</div>
+              </div>
+              <div class="filters">
+                <label class="muted small">Sort by:</label>
+                <select id="sortBy">
+                  <option value="recommended">Recommended</option>
+                  <option value="price-asc">Price: Low → High</option>
+                  <option value="price-desc">Price: High → Low</option>
+                </select>
+
+                <label class="muted small">Fare:</label>
+                <select id="fareFilter">
+                  <option value="all">All fares</option>
+                  <option value="Promo">Promo</option>
+                  <option value="Regular">Regular</option>
+                </select>
+
+                <!-- 🆕 Cabin Filter -->
+                <label class="muted small">Cabin:</label>
+                <select id="cabinFilter">
+                  <option value="all">All Cabins</option>
+                  <option value="Economy">Economy</option>
+                  <option value="Business">Business</option>
+                </select>
+
+                <button id="backToSearch" class="btn-ghost">Back</button>
+              </div>
+            </div>
+
+            <!-- Flight list -->
+            <div id="flightList" class="flight-list"></div>
+          </section>
+
+          <!-- 🟡 STEP 3: Passenger -->
+          <section class="card" id="passengerCard" style="display:none">
+            <h3>Passenger information</h3>
+            <form id="passengerForm" novalidate>
+              <div id="passengerContainer"></div>
+              <div class="actions" style="justify-content:space-between">
+                <button type="button" id="backToFlights" class="btn-ghost">Back</button>
+                <button type="submit" class="btn-primary">Continue</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- 🟡 STEP 4: Summary -->
+          <section class="card" id="summaryCard" style="display:none">
+            <h3>Booking summary</h3>
+            <div id="summaryContent"></div>
+            <div class="actions" style="justify-content:flex-end;margin-top:16px">
+              <button id="editBooking" class="btn-ghost">Edit</button>
+              <button id="bookNowBtn" class="btn-primary">Book Now</button>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </section>
 
   <script src="script.js"></script>
 </body>

@@ -16,8 +16,8 @@
 /* -------------------- GLOBAL -------------------- */
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  margin: 10;
+  padding: 10;
 }
 
 body {
@@ -130,19 +130,24 @@ body {
   width: 100%;
   padding-top: 180px;
   padding-bottom: 60px;
+  background: transparent; /* FIXED */
+  box-shadow: none; /* FIXED */
 }
 
 /* -------------------- CARD -------------------- */
 .card {
   background: var(--card);
-  width: 720px; /* made wider for landscape */
-  padding: 36px 40px; /* slightly more padding */
+  width: 1000px;
+  height: auto;
+  padding: 36px 40px;
   border-radius: var(--radius);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
   transition: all 0.25s ease;
   display: flex;
   flex-direction: column;
-  gap: 22px; /* slightly increased spacing */
+  gap: 22px;
+  position: relative;
+  z-index: 2;
 }
 
 .card h2 {
@@ -157,6 +162,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
 }
 
 label {
@@ -165,14 +171,15 @@ label {
   color: #222;
 }
 
-/* Make all text and email inputs consistent with Age box style */
 input[type="text"],
 input[type="email"],
 input[type="date"],
 input[type="number"],
 select {
+  width: 100%;
   padding: 14px 16px;
   border-radius: 12px;
+  box-sizing: border-box;
   border: none;
   font-size: 17px;
   outline: none;
@@ -185,7 +192,6 @@ input:focus,
 select:focus {
   box-shadow: 0 0 0 3px rgba(0, 48, 135, 0.2);
 }
-
 
 /* -------------------- BUTTONS -------------------- */
 .actions {
@@ -310,7 +316,7 @@ select:focus {
   background: #fff;
   border-radius: 14px;
   border: 1px solid #e2e5ee;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   padding: 18px 20px;
   display: flex;
   justify-content: space-between;
@@ -320,7 +326,7 @@ select:focus {
 
 .flight-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
 }
 
 /* Left side flight info */
@@ -358,4 +364,80 @@ select:focus {
   padding: 8px 18px;
   border-radius: 8px;
   font-size: 14px;
+}
+
+/* -------------------- HOME / LANDING SECTION -------------------- */
+.home {
+  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 160px 20px;
+  background: whitesmoke;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-content {
+  max-width: 700px;
+  background: linear-gradient(to bottom right, #003087, #0078ff);
+  padding: 60px 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.home-content h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+  line-height: 1.2;
+}
+
+.home-content p {
+  font-size: 1.25rem;
+  margin-bottom: 28px;
+  opacity: 0.95;
+}
+
+.home .btn-primary {
+  background: #fff;
+  color: var(--brand);
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 14px 36px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.home .btn-primary:hover {
+  background: #e6e6e6;
+  transform: scale(1.05);
+}
+
+/* Make sure booking section expands fully */
+#bookingSection {
+  width: 100%;
+}
+
+/* -------------------- FIX: REMOVE DOUBLE BACKGROUND BEHIND BOOKING CARD -------------------- */
+.main-content,
+.booking-card,
+.center-layout {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.booking-card {
+  padding: 0;
+}
+
+.card {
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2;
 }
