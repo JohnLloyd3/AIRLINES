@@ -19,7 +19,6 @@ const returnWrapper = document.getElementById('returnWrapper');
 const passengersInput = document.getElementById('passengers');
 const clearStorageBtn = document.getElementById('clearStorage');
 
-
 const sortBy = document.getElementById('sortBy');
 const fareFilter = document.getElementById('fareFilter');
 const cabinFilter = document.getElementById('cabinFilter');
@@ -28,9 +27,10 @@ const cabinFilter = document.getElementById('cabinFilter');
 const homeSection = document.getElementById('homeSection');
 const bookingSection = document.getElementById('bookingSection');
 const bookFlightBtn = document.getElementById('bookFlightBtn');
+const backHomeBtn = document.getElementById('backHomeBtn');
 
 // ==============================
-// Home Section Event
+// Home Section Events
 // ==============================
 if (bookFlightBtn) {
   bookFlightBtn.addEventListener('click', () => {
@@ -40,8 +40,17 @@ if (bookFlightBtn) {
   });
 }
 
+if (backHomeBtn) {
+  backHomeBtn.addEventListener('click', () => {
+    bookingSection.style.display = 'none';
+    homeSection.style.display = 'flex';
+    window.scrollTo(0, 0);
+  });
+}
 
-
+// ==============================
+// Flight Data
+// ==============================
 const FLIGHTS = [
   // Manila → Cebu (5)
   { id: "F101", route: "Manila → Cebu", depart: "07:30", price: 3300, dur: "1h10m", fare: "Regular", cabin: "Economy" },
@@ -115,6 +124,9 @@ const FLIGHTS = [
 ];
 
 
+// ==============================
+// App State
+// ==============================
 let state = {
   from: "",
   to: "",
@@ -130,29 +142,9 @@ let state = {
 function setStep(n) {
   steps.forEach(s => s.classList.toggle('active', +s.dataset.step === n));
 }
-
 function formatPHP(n) {
   return "₱" + n.toLocaleString();
 }
-
-// ==============================
-// Initialization
-// ==============================
-document.addEventListener("DOMContentLoaded", () => {
-  const fromList = document.getElementById("airportList");
-  const toList = document.getElementById("airportListTo");
-  AIRPORTS.forEach(a => {
-    fromList.innerHTML += `<option value="${a}">`;
-    toList.innerHTML += `<option value="${a}">`;
-  });
-});
-
-// ==============================
-// Flight Type (Return Toggle)
-// ==============================
-flightType.addEventListener('change', () => {
-  returnWrapper.style.display = flightType.value === 'oneway' ? 'none' : 'block';
-});
 
 // ==============================
 // Booking Form Submit
@@ -164,10 +156,6 @@ bookingForm.addEventListener('submit', e => {
   state.to = toInput.value.trim();
   state.trip = flightType.value;
   state.passengers = Math.max(1, +passengersInput.value || 1);
-
-  if (!state.from || !state.to) {
-    return alert("Please complete From and To fields");
-  }
 
   const fromCity = state.from.split(' ')[0];
   const toCity = state.to.split(' ')[0];
@@ -187,13 +175,10 @@ bookingForm.addEventListener('submit', e => {
   }
 
   state.filteredFlights = filtered;
-
   searchCard.style.display = 'none';
   flightsCard.style.display = 'block';
   setStep(2);
-
   renderFlights(state.filteredFlights);
-  updateOverview();
 });
 
 // ==============================
@@ -219,31 +204,6 @@ function renderFlights(list) {
 }
 
 // ==============================
-// Sorting and Filtering
-// ==============================
-sortBy.addEventListener('change', applyFilters);
-fareFilter.addEventListener('change', applyFilters);
-cabinFilter.addEventListener('change', applyFilters);
-
-function applyFilters() {
-  let list = [...(state.filteredFlights || FLIGHTS)];
-
-  if (fareFilter.value !== 'all') {
-    list = list.filter(f => f.fare === fareFilter.value);
-  }
-  if (cabinFilter.value !== 'all') {
-    list = list.filter(f => f.cabin === cabinFilter.value);
-  }
-  if (sortBy.value === 'price-asc') {
-    list.sort((a, b) => a.price - b.price);
-  } else if (sortBy.value === 'price-desc') {
-    list.sort((a, b) => b.price - a.price);
-  }
-
-  renderFlights(list);
-}
-
-// ==============================
 // Flight Selection
 // ==============================
 window.selectFlight = function (i) {
@@ -253,39 +213,46 @@ window.selectFlight = function (i) {
   setStep(3);
   generatePassengerFields();
 };
+
 // ==============================
-// Generate Passenger Fields
+// Generate Passenger Fields (with discount type)
 // ==============================
 function generatePassengerFields() {
-  passengerContainer.innerHTML = ''; // Clear old fields
-
+  passengerContainer.innerHTML = '';
   for (let i = 1; i <= state.passengers; i++) {
     const wrapper = document.createElement('div');
     wrapper.className = 'passenger-block';
     wrapper.innerHTML = `
       <h4>Passenger ${i}</h4>
       <label for="pname${i}">Name:</label>
-      <input type="text" id="pname${i}" name="pname${i}" required placeholder="Full Name" />
+      <input type="text" id="pname${i}" required placeholder="Full Name" />
 
       <label for="page${i}">Age:</label>
-      <input type="number" id="page${i}" name="page${i}" required min="0" placeholder="Age" />
+      <input type="number" id="page${i}" required min="0" placeholder="Age" />
 
       <label for="pgen${i}">Gender:</label>
-      <select id="pgen${i}" name="pgen${i}" required>
+      <select id="pgen${i}" required>
         <option value="">Select Gender</option>
         <option value="Male">Male</option>
         <option value="Female">Female</option>
       </select>
 
       <label for="pemail${i}">Email:</label>
-      <input type="email" id="pemail${i}" name="pemail${i}" required placeholder="example@email.com" />
+      <input type="email" id="pemail${i}" required placeholder="example@email.com" />
 
+      <label for="ptype${i}">Discount Type:</label>
+      <select id="ptype${i}">
+        <option value="">None</option>
+        <option value="Student">Student (20%)</option>
+        <option value="Senior">Senior Citizen (30%)</option>
+        <option value="PWD">PWD (25%)</option>
+        <option value="Military">Military (15%)</option>
+      </select>
       <hr>
     `;
     passengerContainer.appendChild(wrapper);
   }
 }
-
 
 // ==============================
 // Passenger Form Submit
@@ -299,9 +266,10 @@ passengerForm.addEventListener('submit', e => {
     const age = document.getElementById(`page${i}`).value;
     const gen = document.getElementById(`pgen${i}`).value;
     const email = document.getElementById(`pemail${i}`).value.trim();
+    const discountType = document.getElementById(`ptype${i}`).value;
 
     if (!name || !age || !gen || !email) return alert("Complete all passenger fields");
-    list.push({ name, age, gen, email });
+    list.push({ name, age, gen, email, discountType });
   }
 
   state.passengerData = list;
@@ -312,14 +280,51 @@ passengerForm.addEventListener('submit', e => {
 });
 
 // ==============================
-// Summary Render
+// Summary Render (Any-type Discount)
+// ==============================
+// ==============================
+// Summary Render (Discount for even-numbered passengers)
 // ==============================
 function renderSummary() {
   const f = state.selectedFlight;
-  const total = f.price * state.passengers;
-  let passengersHTML = state.passengerData.map((p, i) => `
-    <p><strong>Passenger ${i + 1}:</strong> ${p.name}, ${p.age} yrs, ${p.gen}, ${p.email}</p>
-  `).join("");
+  const passengers = state.passengerData;
+  let subtotal = f.price * passengers.length;
+  let totalDiscount = 0;
+
+  // Define possible discount types and their rates
+  const discountRates = {
+    student: 0.20,
+    senior: 0.30,
+    pwd: 0.25,
+    military: 0.15,
+  };
+
+  let passengersHTML = passengers
+    .map((p, i) => {
+      const passengerNumber = i + 1;
+      const isEven = passengerNumber % 2 === 0;
+
+      let discountType = "";
+      let rate = 0;
+
+      if (isEven) {
+        // Apply the passenger's chosen discount type (or default to Student if none)
+        discountType = (p.discountType || "Student").toLowerCase();
+        rate = discountRates[discountType] || 0.20; // Default 20% if not listed
+      }
+
+      const discountAmount = f.price * rate;
+      totalDiscount += discountAmount;
+
+      const discountText = isEven
+        ? `${p.discountType || "Student"} (${rate * 100}% off)`
+        : "No discount";
+
+      return `<p><strong>Passenger ${passengerNumber}:</strong> ${p.name}, ${p.age} yrs, ${p.gen}, ${p.email}, <em>${discountText}</em></p>`;
+    })
+    .join("");
+
+  const totalAfterDiscount = subtotal - totalDiscount;
 
   summaryContent.innerHTML = `
     <p><strong>Route:</strong> ${f.route}</p>
@@ -327,24 +332,15 @@ function renderSummary() {
     <p><strong>Fare Type:</strong> ${f.fare}</p>
     <hr>
     ${passengersHTML}
-    <p><strong>Total:</strong> ${formatPHP(total)}</p>
+    <hr>
+    <p><strong>Subtotal:</strong> ${formatPHP(subtotal)}</p>
+    <p><strong>Total Discount:</strong> -${formatPHP(totalDiscount)}</p>
+    <p><strong>Total After Discount:</strong> ${formatPHP(totalAfterDiscount)}</p>
   `;
-  updateOverview();
 }
 
 // ==============================
-// Trip Overview
-// ==============================
-function updateOverview() {
-  ovPassengers.textContent = state.passengers;
-  ovCabin.textContent = cabinFilter ? cabinFilter.value : "—";
-  ovFare.textContent = state.selectedFlight ? state.selectedFlight.fare : '—';
-  ovTotal.textContent = state.selectedFlight ? formatPHP(state.selectedFlight.price * state.passengers) : '₱0';
-  miniOverview.textContent = state.selectedFlight ? `${state.selectedFlight.id} • ${state.selectedFlight.route}` : 'No trip selected';
-}
-
-// ==============================
-// Navigation
+// Navigation Buttons
 // ==============================
 document.getElementById('backToFlights').addEventListener('click', () => {
   passengerCard.style.display = 'none';
@@ -371,8 +367,6 @@ clearStorageBtn.addEventListener('click', () => {
 });
 
 // ==============================
-// Initialize App
+// Initialize
 // ==============================
 setStep(1);
-updateOverview();
-
